@@ -9,7 +9,7 @@ var app = express();
 
 app.use(bodyParser.json());
 
-app.post('/todo', (request, response) => {
+app.post('/todos', (request, response) => {
 	var todo = new Todo({
 		text: request.body.text,
 		completed: request.body.completed,
@@ -23,9 +23,9 @@ app.post('/todo', (request, response) => {
 	});
 });
 
-app.get('/todo', (request, response) => {
-	Todo.find().then((todo) => {
-		response.send(todo)
+app.get('/todos', (request, response) => {
+	Todo.find().then((todos) => {
+		response.send({todos})
 	}, (error) => {
 		response.status(400).send(error);
 	});

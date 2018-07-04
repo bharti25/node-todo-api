@@ -4,10 +4,21 @@ const request = require('supertest');
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
+const todos = [{
+	text: 'First todos text'
+}, {
+	text: 'Second todos text'
+}];
+
 // beforeEach lets us run some code before every single test.
 
 beforeEach((done) => {
-	Todo.remove({}).then(() => done());
+	// Todo.remove({}).then(() => {
+	// 	return Todo.insertMany(todos);
+	// }).then(() => done());
+	Todo.remove({}).then(() => {
+		return Todo.insertMany(todos);
+	}).then(() => done());
 });
 
 describe('POST /todos', () => {
@@ -26,19 +37,18 @@ describe('POST /todos', () => {
 					return done(error);
 				}
 
-				Todo.find().then((todo) => {
-					expect(todos.length).toBe(1);
-					expect(todos[0].text).toBe(text);
+				Todo.find({text}).then((todo) => {
+					expect(todo.length).toBe(1);
+					expect(todo[0].text).toBe(text);
 					done();
-				}).catch((e) => done(e));
+				}).catch((error) => done(error));
 			});
 	});
 
 	it('should not create todo with invalid data body', (done) => {
-		
 		request(app)
 			.post('/todos')
-			.send()
+			.send({})
 			.expect(400)
 			// .expect((response) => {
 			// 	expect(response.body)
@@ -48,9 +58,21 @@ describe('POST /todos', () => {
 					return done(error);
 				}
 				Todo.find().then((todos) => {
-					expect(todos.length).toBe(0);
+					expect(todos.length).toBe(2);
 					done();
-				}).catch((e) => done(e));
+				}).catch((error) => done(error));
 			});
+	});
+});
+
+describe('GET /todos', () => {
+	it('should get all the todos', (done) => {
+		request(app)
+			.get('/todos')
+			.expect(200)
+			.expect((response) => {
+				expect(response.body.todos.length).toBe(2);
+			})
+			.end(done);
 	});
 });
