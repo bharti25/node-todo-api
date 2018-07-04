@@ -23,9 +23,19 @@ app.post('/todo', (request, response) => {
 	});
 });
 
+app.get('/todo', (request, response) => {
+	Todo.find().then((todo) => {
+		response.send(todo)
+	}, (error) => {
+		response.status(400).send(error);
+	});
+});
+
 app.listen(3000, () => {
 	console.log('Started app on port 3000');
 });
+
+module.exports = {app};
 
 // var objTodo = new Todo({
 // 	text: 'Read'
