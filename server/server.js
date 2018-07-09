@@ -25,6 +25,8 @@ app.post('/todos', (request, response) => {
 		response.send(doc);
 	}, (e) => {
 		response.status(400).send(e);
+	}).catch((e) => {
+		response.status(404).send();
 	});
 });
 
@@ -33,6 +35,8 @@ app.get('/todos', (request, response) => {
 		response.send({todos})
 	}, (error) => {
 		response.status(400).send(error);
+	}).catch((error) => {
+		response.status(404).send();
 	});
 });
 
@@ -48,7 +52,9 @@ app.get('/todos/:id', (request, response) => {
 			return response.status(404).send();
 		}
 		response.send({todo});
-	}).catch((error) => response.status(400).send());
+	}).catch((error) => {
+		response.status(400).send()
+	});
 });
 
 app.listen(port, () => {
